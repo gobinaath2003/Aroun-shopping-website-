@@ -1,11 +1,11 @@
+
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import productApi from "../../api/productApi";
 import { Loader2 } from "lucide-react";
 import Title from "./Title";
 
-
-const CategoriesListView = () => {
+const CategoryListView = () => {
   const [groupedCategories, setGroupedCategories] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -13,9 +13,21 @@ const CategoriesListView = () => {
     const fetchCategories = async () => {
       try {
         const res = await productApi.getAll();
+        let products = res.data;
+
+        // Normalize response shape
+        if (!Array.isArray(products)) {
+          products = products?.products || [];
+        }
+
+        if (!Array.isArray(products)) {
+          console.error("Expected products to be an array, got:", products);
+          setGroupedCategories({});
+          return;
+        }
 
         // ✅ Group products by category
-        const grouped = res.data.reduce((acc, product) => {
+        const grouped = products.reduce((acc, product) => {
           const categoryName = product.category || "Uncategorized";
           if (!acc[categoryName]) acc[categoryName] = [];
           acc[categoryName].push(product);
@@ -56,7 +68,7 @@ const CategoriesListView = () => {
                   <Link
                     to={`/products/${product._id}`}
                     key={product._id}
-                    className="group rounded-xl overflow-hidden transition-all duration-300 "
+                    className="group rounded-xl overflow-hidden transition-all duration-300"
                   >
                     {/* Product Image */}
                     <div className="w-full h-32 sm:h-36 md:h-36 bg-gray-100 overflow-hidden flex items-center justify-center">
@@ -87,4 +99,4 @@ const CategoriesListView = () => {
   );
 };
 
-export default CategoriesListView;
+export default CategoryListView;

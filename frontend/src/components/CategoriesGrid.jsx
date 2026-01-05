@@ -1,3 +1,6 @@
+
+
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -24,9 +27,19 @@ const CategoriesCarousel = () => {
     const fetchProducts = async () => {
       try {
         const res = await productApi.getAll();
-        const products = res.data;
+        let products = res.data;
 
-        // Build unique category map (since category is now a string)
+        // Handle cases where API returns { products: [...] }
+        if (!Array.isArray(products)) {
+          products = products?.products || [];
+        }
+
+        if (!Array.isArray(products)) {
+          console.error("Expected products to be an array, got:", products);
+          return;
+        }
+
+        // Build unique category map
         const categoryMap = {};
 
         products.forEach((p) => {
@@ -35,11 +48,17 @@ const CategoriesCarousel = () => {
             if (!categoryMap[cat]) {
               categoryMap[cat] = {
                 name: cat,
-                image: p.images?.[0]?.url || p.images?.[0] || p.image || "/placeholder.png",
+                image:
+                  p.images?.[0]?.url ||
+                  p.images?.[0] ||
+                  p.image ||
+                  "/placeholder.png",
                 items: [],
               };
             }
-            categoryMap[cat].items.push(p.name || p.title || "Unnamed Product");
+            categoryMap[cat].items.push(
+              p.name || p.title || "Unnamed Product"
+            );
           }
         });
 
