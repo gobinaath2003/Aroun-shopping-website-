@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema(
     mrp: { type: Number, required: true },
     discount: { type: Number, required: true },
     rating: { type: Number, default: 0 },
-    category: { type: String, required: true }, 
+    c: { type: String, required: true }, 
     images: [String], // Cloudinary URLs
     stock: { type: Number, default: 0 }, 
   },

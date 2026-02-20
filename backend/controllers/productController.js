@@ -119,3 +119,18 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Failed to delete product" });
   }
 };
+
+exports.deletecategory= async(req,res)=>{
+
+  try{
+    const category=await Product.findByIdAndDelete(req.
+params.id
+    );
+
+    if(!category){
+      return res.status(200).json({message:"category deleted successfully"});
+    }
+  }catch(err){
+     return res.status(400).json({message:"category failed to delete "});
+  }
+}
